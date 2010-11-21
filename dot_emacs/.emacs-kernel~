@@ -1,0 +1,69 @@
+;;;; 共通キーバインド ==========================================================
+(global-set-key "\C-h" 'backward-delete-char-untabify)
+(global-set-key "\M-h" 'help-for-help)
+(global-set-key [C-return] 'mac-toggle-max-window)
+
+;;;; 環境に関する設定 ==========================================================
+;; ナローイングを使用可能に変更
+(put 'narrow-to-region 'disabled nil)
+
+;;;; フレームおよび画面関連 ====================================================
+;;; ツールバー
+;; ツールバーを消す
+(if window-system (progn
+		    (tool-bar-mode 0)))
+;;; フレーム位置設定
+(setq initial-frame-alist '((top . 0) (left . 0)
+ 			    (width . 80) (height . 43)))
+
+;;; スタートアップメッセージを禁止
+(setq inhibit-startup-message t)
+
+;;; モードラインに情報を追加
+;; 時間を表示
+(display-time-mode 1)
+;; 列番号を表示
+(column-number-mode 1)
+
+;; ;;画面の色を変更
+;; 文字色を設定
+(add-to-list 'default-frame-alist '(foreground-color . "LightGray"))
+;; 背景色を設定
+(add-to-list 'default-frame-alist '(background-color . "Black"))
+;; カーソル色を設定
+(add-to-list 'default-frame-alist '(cursor-color . "Gray"))
+;; 透過ウィンドウに設定(Macのみ)
+(when (eq window-system 'mac)
+  (set-frame-parameter nil 'alpha 80))
+
+;; 選択範囲に色付け
+(transient-mark-mode 1)
+
+;; ビープ音＆画面フラッシュを消す
+(setq ring-bell-function 'ignore)
+
+
+;;;; Misc ======================================================================
+;; スクリプト保存時に自動的に(chmod+x)を実行
+(add-hook 'after-save-hook
+ 	  'executable-make-buffer-file-executable-if-script-p)
+
+;; 対応する括弧をハイライト表示させる
+(show-paren-mode t)
+
+;; Emacsでシンボリックリンクを開いた際の質問を非表示
+(setq vc-follow-symlinks t)
+
+;; ウィンドウ最大化用トグル(Mac用)
+(defun mac-toggle-max-window ()
+  (interactive)
+  (if (frame-parameter nil 'fullscreen)
+      (set-frame-parameter nil 'fullscreen nil)
+    (set-frame-parameter nil 'fullscreen 'fullboth)))
+
+;;; ファイル名重複時にバッファ名をわかりやすくする
+(require 'uniquify)
+;; filename<dir> 形式のバッファ名にする
+(setq uniquify-buffer-name-style 'post-forward-angle-brackets)
+;; *で囲まれたバッファ名は対象外にする
+(setq uniquify-ignore-buffers-re "*[^*]+*")

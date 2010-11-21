@@ -1,0 +1,143 @@
+(add-to-list 'load-path "~/.emacs.d/elisp")
+(add-to-list 'load-path "~/.emacs.d/elisp/rinari")
+(add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
+(add-to-list 'load-path "~/.emacs.d/elisp/goby")
+
+;;;; 新しく追加したもの ========================================================
+;;; Goby (http://www.mew.org/~kazu/proj/goby/ja/)
+;;; 効果: emacs上でプレゼンテーションが実施できる
+(autoload 'goby "goby" nil t)
+(add-hook 'goby-view-mode-enter-hook 'mac-hide-menu-bar)
+(add-hook 'goby-view-mode-exit-hook 'mac-show-menu-bar)
+
+;;; zencoding-mode
+(require 'zencoding-mode)
+(add-hook 'sgml-mode-hook 'zencoding-mode) ;; Auto-start on any markup modes
+(define-key zencoding-mode-keymap (kbd "<C-return>") nil)
+(define-key zencoding-mode-keymap (kbd "<S-return>") 'zencoding-expand-line)
+; (define-key zencoding-mode-keymap "\C-z" 'zencoding-expand-yas)
+
+;;; recentf.elの設定
+;; 最近のファイル1000個を保存
+(setq recentf-max-saved-items 1000)
+;; 最近使ったファイルに加えないファイルを正規表現で指定
+(setq recentf-exclude '("/TAGS$" "/var/tmp/"))
+(require 'recentf-ext)
+
+(add-to-list 'load-path "~/.emacs.d/kbmacro")
+(require 'my_macro)
+
+;;; auto-install.elの設定
+(require 'auto-install)
+;; auto-installでのelispインストール先
+;(setq auto-install-directory "~/.emacs.d/elxisp/")
+(setq auto-install-directory "~/.emacs.d/elisp/")
+;; 起動時にEmacsWikiのページ名を保管候補に加える
+(auto-install-update-emacswiki-package-name t)
+;; install-elisp.el互換モードにする
+(auto-install-compatibility-setup)
+;; ediff関連のバッファを１つのフレームにまとめる
+(setq ediff-window-setup-function 'ediff-setup-windows-plain)
+
+;;; text-translator.elの設定
+(require 'text-translator)
+(setq text-translator-auto-selection-func
+      'text-translator-translate-by-auto-selection-enja)
+
+;;; bm.elの設定(カーソル位置に目に見える印をつける)
+(setq-default bm-buffer-persistence nil)
+(setq bm-restore-repository-on-load t)
+(require 'bm)
+(add-hook 'find-file-hooks 'bm-buffer-restore)
+(add-hook 'kill-buffer-hook 'bm-buffer-save)
+(add-hook 'after-save-hook 'bm-buffer-save)
+(add-hook 'after-revert-hook 'bm-buffer-restore)
+(add-hook 'vc-before-checkin-hook 'bm-buffer-save)
+
+;;; diff-modeの背景色等を変更
+(add-hook 'diff-mode-hook
+         (lambda ()
+            (set-face-foreground 'diff-context-face "grey50")
+            (set-face-background 'diff-header-face "black")
+            (set-face-underline-p 'diff-header-face t)
+            (set-face-foreground 'diff-file-header-face "MediumSeaGreen")
+            (set-face-background 'diff-file-header-face "black")
+            (set-face-foreground 'diff-index-face "MediumSeaGreen")
+            (set-face-background 'diff-index-face "black")
+            (set-face-foreground 'diff-hunk-header-face "plum")
+            (set-face-background 'diff-hunk-header-face"black")
+            (set-face-foreground 'diff-removed-face "pink")
+            (set-face-background 'diff-removed-face "gray5")
+            (set-face-foreground 'diff-added-face "light green")
+            (set-face-foreground 'diff-added-face "white")
+            (set-face-background 'diff-added-face "SaddleBrown")
+            (set-face-foreground 'diff-changed-face "DeepSkyBlue1")))
+
+;; psvn対策
+(setq process-coding-system-alist '(("svn" . utf-8)))
+(setq default-file-name-coding-system 'utf-8)
+
+;;;; Emacs勉強会用 =============================================================
+;;; emacsclientの設定
+;;; 効果: シェルから現在のEmacsにアクセスできる
+;;; 使い方: emacsclient filename
+(server-start)
+(defun iconify-emacs-when-server-is-done ()
+  (unless server-clients (iconify-frame)))
+;; 編集後にitermに戻るように設定
+(add-hook 'server-done-hook
+	  (lambda ()
+            (do-applescript "tell application \"iTerm\"
+                                activate
+                             end")))
+;; 編集が終了したらEmacsをアイコン化する
+; (add-hook 'server-done-hook 'iconify-emacs-when-server-is-done)
+;; 編集終了をC-x C-cに割り当てる(デフォルトはC-x #)
+;(global-set-key (kbd "C-x C-c") 'server-edit)
+;; M-x exitでEmacsを終了できるようにする
+;(defalias 'exit 'save-buffers-kill-emacs)
+
+;;; tempbuf.elの設定
+;;; 効果: 使わないバッファを自動的に削除
+(require 'tempbuf)
+;; ファイルを開いたら自動的にtempbufを有効にする
+(add-hook 'find-file-hooks 'turn-on-tempbuf-mode)
+;; diredバッファに対してtempbufを有効にする
+(add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
+
+;;; auto-save-buffers.elの設定
+;;; 効果: ファイルを自動保存する
+;;; Inttall from: http://homepage3.nifty.com/oatu/emacs/archives/auto-save-buffers.el
+;;; Original    : http://Oxcc.net/misc/auto-save/auto-save-buffers.el
+(require 'auto-save-buffers)
+(run-with-idle-timer 2 t 'auto-save-buffers) ; アイドル２秒で保存
+
+
+;;; shellモードが文字化けするので設定
+;; (set-language-environment "Japanese")
+;; (prefer-coding-system 'utf-8-unix)
+;; (setq default-buffer-file-coding-system 'utf-8)
+;; (set-buffer-file-coding-system 'utf-8)
+;; (set-terminal-coding-system 'utf-8)
+;; (set-keyboard-coding-system 'utf-8)
+;; (set-clipboard-coding-system 'utf-8)
+
+;; (cond
+;;  (or (eq window-system 'mac) (eq window-system 'ns)
+;;   ;; Mac OS X の HFS+ ファイルフォーマットではファイル名は NFD (の様な物)で扱うため以下の設定をする必要がある
+;;   (require 'ucs-normalize)
+;;   (setq file-name-coding-system 'utf-8-hfs)
+;;   (setq locale-coding-system 'utf-8-hfs))
+;;  (or (eq system-type 'cygwin) (eq system-type 'windows-nt)
+;;   (setq file-name-coding-system 'utf-8)
+;;   (setq locale-coding-system 'utf-8)
+;;   ;; もしコマンドプロンプトを利用するなら sjis にする
+;;   ;; (setq file-name-coding-system 'sjis)
+;;   ;; (setq locale-coding-system 'sjis)
+;;   ;; 古い Cygwin だと EUC-JP にする
+;;   ;; (setq file-name-coding-system 'euc-jp)
+;;   ;; (setq locale-coding-system 'euc-jp)
+;;   )
+;;  (t
+;;   (setq file-name-coding-system 'utf-8)
+;;   (setq locale-coding-system 'utf-8)))

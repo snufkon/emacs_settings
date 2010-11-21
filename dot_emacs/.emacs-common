@@ -1,0 +1,199 @@
+;;;; ロード関連 ================================================================
+;; elisp用
+(add-to-list 'load-path "~/.emacs.d/elisp")
+
+;; rinari用
+(add-to-list 'load-path "~/.emacs.d/elisp/rinari")
+(add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
+
+;; SKK用
+(setq load-path (cons "~/share/emacs/site-lisp/skk" load-path))
+(setq load-path (cons "~/share/emacs/site-lisp/apel" load-path))
+(setq load-path (cons "~/share/emacs/site-lisp/emu" load-path))
+
+;;;; 基本システム設定 ==========================================================
+(load (expand-file-name "~/.emacs.d/dot_emacs/system/font-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/system/skk-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/system/kill-ring-settings.el"))
+
+;;;; モード設定 ================================================================
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/c-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/markdown-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/js2-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/ruby-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/rhtml-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/python-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/yaml-mode-settings.el"))
+
+;;;; 主要項目設定 ==============================================================
+(load (expand-file-name "~/.emacs.d/dot_emacs/major/anything-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/major/auto-complete-settings.el"))
+
+;;;; 入力に関する設定 ==========================================================
+;;; 入力補完 -------------------------------------------------------------------
+(require 'yasnippet)
+(yas/initialize)
+(yas/load-directory "~/.emacs.d/snippets")
+(yas/load-directory "~/.emacs.d/yasnippets-rails/rails-snippets")
+
+;;;; Misc ======================================================================
+
+;;; install-elispの設定 --------------------------------------------------------
+(require 'install-elisp)
+(setq install-elisp-repository-directory "~/.emacs.d/elisp")
+
+;;; lgrep, rgrepの設定 ---------------------------------------------------------
+;; 日本語を自動判定する設定(windowsではうまく動作しない。windows用の設定は
+;; "SoftwareDsign 2009年5月号"を参照.
+;; 日本語を自動判定する設定はmacでも機能しない
+(if (eq window-system 'mac)
+    nil ; macの場合は設定しない
+  (setq grep-host-defaults-alist nil)
+  (setq grep-template "lgrep <C> -n <R> <F> <N>")
+  (setq grep-find-template "find . <X> -type f <F> -print0 | xargs -0 -e lgrep <C> -n <R> <N>"))
+
+;;; locateコマンドでHOMEディレクトリ以下を処理するように設定 -------------------
+(require 'locate)
+;; locate db のファイル名
+(defvar locate-db-name "locate.db")
+;; locate コマンド
+(if (eq window-system 'mac)
+    (setq locate-command "/opt/local/bin/glocate")
+  (setq locate-command "/usr/bin/locate.findutils"))
+
+;; locateコマンドラインを作るための共通関数
+(defun locate-make-command-line (search-string dbpath &rest opts)
+  (append
+   ;; 大文字小文字を無視するように設定
+   (list locate-command "-i")
+   (when (and dbpath (file-exists-p dbpath))
+     (list "-d" dbpath))
+   opts
+   (list search-string)))
+
+;; home以下のファイルを探すためのlocateコマンドライン
+(defun home-locate-make-command-line (search-string &optional &rest opts)
+  (apply 'locate-make-command-line
+	 search-string
+	 ;; home 直下の locate.db を使うように指定
+	 (expand-file-name locate-db-name "~")
+	 opts))
+
+;; 標準のlocateでhome以下を探すように設定する
+(setq locate-make-command-line 'home-locate-make-command-line)
+
+;;; プロジェクト単位でlocateするplocateコマンドを作成 --------------------------
+
+;; 指定したファイルをdirを起点に探すための関数
+(defun find-file-upward (name &optional dir)
+  (setq dir (file-name-as-directory (or dir default-directory)))
+  (cond
+   ((string= dir (directory-file-name dir))
+    nil)
+   ((file-exists-p (concat dir name))
+    (expand-file-name name dir))
+   (t 
+    (find-file-upward name (expand-file-name ".." dir)))))
+
+;; プロジェクトごとのlocate dbを使ったlocateコマンドライン
+(defun plocate-make-command-line (search-string &optional &rest opts)
+  (apply 'locate-make-command-line
+	 search-string
+	 (find-file-upward locate-db-name)
+	 opts))
+
+;; プロジェクトごとのlocate dbを使ったlocateコマンド
+(defun plocate (search-string &optional arg)
+  (interactive
+   (list
+    (locate-prompt-for-search-string)
+    current-prefix-arg))
+  (let ((locate-make-command-line 'plocate-make-command-line))
+    (locate search-string nil arg)))
+;; キーバインド
+(global-set-key "\C-cp" 'plocate)
+
+;;; grep-editの設定 ------------------------------------------------------------
+(require 'grep-edit)
+
+; TODO: emacs 24で発生するバグを取り除く
+; M-xの補完を行う
+;(require 'mcomplete)
+;(turn-on-mcomplete-mode)
+
+; C-xC-fの補完を行う(Emacs22の場合のみ設定)
+(cond ((string-match "GNU Emacs 22\\." (emacs-version))
+       (setq hc-ctrl-x-c-is-completion t)
+       (require 'highlight-completion)
+       (highlight-completion-mode 1)
+       (global-set-key "\C-\\" 'toggle-input-method)))
+
+;; for migemo
+;; http://namazu.org/~satoru/migemo/
+;; http://www4.kcn.ne.jp/~boochang/emacs/migemo.html#install
+;(setq migemo-directory "/usr/local/share/migemo")
+;(setq migemo-directory "c:/cygwin/usr/local/share/migemo")
+;(load "migemo")
+;(setq migemo-use-pattern-alist t)
+
+;; shell-toggleの設定
+;; 参考: http://gihyo.jp/admin/serial/01/ubuntu-recipe/0038?page=1
+(load-library "shell-toggle-patched.el")
+(autoload 'shell-toggle "shell-toggle"
+  "Toggles between the *shell* buffer and whatever buffer you are editing."
+  t)
+(autoload 'shell-toggle-cd "shell-toggle"
+  "Pops up a shell-buffer and insert a \"cd <file-dir>\" command." t)
+(global-set-key "\C-ct" 'shell-toggle)
+(global-set-key "\C-cd" 'shell-toggle-cd)
+
+;;;; プログラミング言語モードの設定 =============================================
+;; (setq rails-tags-dirs '("app" "lib" "test" "db" "vendor"))
+;; (require 'rinari-extend-by-emacs-rails)
+;; (defun ruby-mode-hooks-rinari-extend ()
+;;   (define-key ruby-mode-map (kbd "<C-f1>") 'rails-search-doc)
+;;   (define-key ruby-mode-map [f1] 'rails-search-doc-at-point)
+;; )
+;; (defun rinari-mode-hooks-rinari-extend ()
+;;   (define-key rinari-minor-mode-map "\C-c\C-t" 'rails-create-tags)
+;; )
+;; (add-hook 'ruby-mode-hook 'ruby-mode-hooks-rinari-extend)
+;; (add-hook 'rinari-mode-hook 'rinari-mode-hooks-rinari-extend)
+
+;; Rinari
+(require 'rinari)
+
+;;;; Misc ======================================================================
+(require 'compile)
+(add-to-list 'compilation-error-regexp-alist
+             '(".+\\[\\(.+\\):\\([0-9]+\\)\\]:" 1 2))
+
+;;; gtags ----------------------------------------------------------------------
+(require 'gtags)
+(add-hook 'java-mode-hook (lambda () (gtags-mode 1)))
+(add-hook 'c-mode-hook (lambda () (gtags-mode 1)))
+(add-hook 'c++-mode-hook (lambda () (gtags-mode 1)))
+
+;; rhtml-modeをauto-completeモードの対象に追加
+(setq ac-modes (append ac-modes '(rhtml-mode)))
+
+; html-modeをauto-completeモードの対象に追加
+(setq ac-modes (append ac-modes '(html-mode)))
+
+;; auto-complete-ruby
+(require 'auto-complete-ruby)
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (setq ac-omni-completion-sources '(("\\.\\=" ac-source-rcodetools)))))
+
+(autoload 'rst-mode "rst-mode" "mode for editing reStructuredText documents" t)
+(require 'rst)  
+(setq auto-mode-alist
+      (append '(("\\.rst$" . rst-mode)
+                     ("\\.rest$" . rst-mode)) auto-mode-alist))
+;(add-hook 'text-mode-hook 'rst-text-mode-bindings)
+
+; バッファ移動を楽にする (ido-mode or iswitchb-mode)
+;(require 'ido)
+;(ido-mode t)
+(iswitchb-mode 1)

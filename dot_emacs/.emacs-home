@@ -1,0 +1,2 @@
+;;; 起動時に.emacsファイルをバッファへ読込み
+;;(find-file "~/.emacs.d/dot_emacs/.emacs-home")
