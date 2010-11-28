@@ -6,7 +6,7 @@
 (load (expand-file-name "~/.emacs.d/dot_emacs/.emacs-common"))
 
 ;; 新規追加
-;(load (expand-file-name "~/.emacs.d/dot_emacs/.emacs-new"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/.emacs-new"))
 
 ;; 自宅用
 ;(load (expand-file-name "~/.emacs.d/dot_emacs/.emacs-home"))
