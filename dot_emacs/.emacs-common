@@ -46,7 +46,9 @@
 ;; 日本語を自動判定する設定(windowsではうまく動作しない。windows用の設定は
 ;; "SoftwareDsign 2009年5月号"を参照.
 ;; 日本語を自動判定する設定はmacでも機能しない
-(if (eq window-system 'mac)
+(if (or 
+     (eq window-system 'mac)
+     (eq window-system 'ns))
     nil ; macの場合は設定しない
   (setq grep-host-defaults-alist nil)
   (setq grep-template "lgrep <C> -n <R> <F> <N>")
@@ -146,6 +148,7 @@
   "Pops up a shell-buffer and insert a \"cd <file-dir>\" command." t)
 (global-set-key "\C-ct" 'shell-toggle)
 (global-set-key "\C-cd" 'shell-toggle-cd)
+
 
 ;;;; プログラミング言語モードの設定 =============================================
 ;; (setq rails-tags-dirs '("app" "lib" "test" "db" "vendor"))
