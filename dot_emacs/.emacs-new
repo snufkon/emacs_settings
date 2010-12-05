@@ -3,6 +3,26 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
 
 ;;;; 新しく追加したもの ========================================================
+;;; etagsファイル作成用コマンド
+;; 参考: http://d.hatena.ne.jp/teny/20060705
+(defvar etags-tag-rebuild-command-ruby
+      (concat "find . -name \\*.rb | xargs etags --language=none --regex="
+              "'/[ \\t]*\\(def\\|class\\|module\\)[ \\t]\\([^ \\t]+\\)/\\2/'")
+      "Ruby スクリプト用のタグファイル作成コマンド。")
+
+(defun etags-tag-rebuild-ruby (command)
+  (interactive
+   (list (read-shell-command "Etags command: "
+                             etags-tag-rebuild-command-ruby))
+   (list etags-tag-rebuild-command-ruby))
+
+  (shell-command command))
+
+; rubyライブラリのETAGSを作成するコマンド
+; find `ruby -e 'print $:.join(" ")'` -name \*.rb | \
+;   xargs etags --language=none --regex='/[ \t]*\(def\|class\)[ \t]\([^ \t]+\)/\2/'
+
+
 ;;; シェルモードの設定 =========================================================
 ; より下に記述した物が PATH の先頭に追加されます
 (dolist (dir (list
