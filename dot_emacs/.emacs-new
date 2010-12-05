@@ -1,4 +1,4 @@
-x(add-to-list 'load-path "~/.emacs.d/elisp")
+(add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
 

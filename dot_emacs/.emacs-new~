@@ -1,14 +1,54 @@
-(add-to-list 'load-path "~/.emacs.d/elisp")
+x(add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
-(add-to-list 'load-path "~/.emacs.d/elisp/goby")
 
 ;;;; 新しく追加したもの ========================================================
-;;; Goby (http://www.mew.org/~kazu/proj/goby/ja/)
-;;; 効果: emacs上でプレゼンテーションが実施できる
-(autoload 'goby "goby" nil t)
-(add-hook 'goby-view-mode-enter-hook 'mac-hide-menu-bar)
-(add-hook 'goby-view-mode-exit-hook 'mac-show-menu-bar)
+;;; シェルモードの設定 =========================================================
+; より下に記述した物が PATH の先頭に追加されます
+(dolist (dir (list
+              "/sbin"
+              "/usr/sbin"
+              "/bin"
+              "/usr/bin"
+              "/opt/local/bin"
+              "/sw/bin"
+              "/usr/local/bin"
+              (expand-file-name "~/bin")
+              (expand-file-name "~/.emacs.d/bin")
+              ))
+  ;; PATH と exec-path に同じ物を追加します
+ (when (and (file-exists-p dir) (not (member dir exec-path)))
+   (setenv "PATH" (concat dir ":" (getenv "PATH")))
+   (setq exec-path (append (list dir) exec-path))))
+
+;;; シェルモードの設定
+;; shell の存在を確認
+(defun skt:shell ()
+  (or (executable-find "zsh")
+      (executable-find "bash")
+      (executable-find "cmdproxy")
+      (error "can't find 'shell' command in PATH!!")))
+
+;; Shell 名の設定
+(setq shell-file-name (skt:shell))
+(setenv "SHELL" shell-file-name)
+(setq explicit-shell-file-name shell-file-name)
+
+;; 文字コード設定
+(set-language-environment  'utf-8)
+(prefer-coding-system 'utf-8)
+(when (eq window-system 'ns)
+  (require 'ucs-normalize)
+  (setq file-name-coding-system 'utf-8-hfs)
+  (setq locale-coding-system 'utf-8-hfs))
+
+(global-set-key (kbd "C-c t") '(lambda ()
+				 (interactive)
+				 (term shell-file-name)))
+
+(autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
+(add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
+; ==============================================================================
 
 ;;; zencoding-mode
 (require 'zencoding-mode)
@@ -101,7 +141,7 @@
 ;;; 効果: 使わないバッファを自動的に削除
 (require 'tempbuf)
 ;; ファイルを開いたら自動的にtempbufを有効にする
-(add-hook 'find-file-hooks 'turn-on-tempbuf-mode)
+;(add-hook 'find-file-hooks 'turn-on-tempbuf-mode)
 ;; diredバッファに対してtempbufを有効にする
 (add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
 
@@ -110,7 +150,7 @@
 ;;; Inttall from: http://homepage3.nifty.com/oatu/emacs/archives/auto-save-buffers.el
 ;;; Original    : http://Oxcc.net/misc/auto-save/auto-save-buffers.el
 (require 'auto-save-buffers)
-(run-with-idle-timer 2 t 'auto-save-buffers) ; アイドル２秒で保存
+(run-with-idle-timer 5 t 'auto-save-buffers) ; アイドル5秒で保存
 
 
 ;;; shellモードが文字化けするので設定

@@ -33,8 +33,10 @@
 ;; カーソル色を設定
 (add-to-list 'default-frame-alist '(cursor-color . "Gray"))
 ;; 透過ウィンドウに設定(Macのみ)
-(when (eq window-system 'mac)
-  (set-frame-parameter nil 'alpha 80))
+(when (or
+       (eq window-system 'mac)
+       (eq window-system 'ns)
+       (set-frame-parameter nil 'alpha 80))
 
 ;; 選択範囲に色付け
 (transient-mark-mode 1)
@@ -55,11 +57,24 @@
 (setq vc-follow-symlinks t)
 
 ;; ウィンドウ最大化用トグル(Mac用)
+;; (defun mac-toggle-max-window ()
+;;   (interactive)
+;;   (if (frame-parameter nil 'fullscreen)
+;;       (set-frame-parameter nil 'fullscreen nil)
+;;     (set-frame-parameter nil 'fullscreen 'fullboth)))
+
 (defun mac-toggle-max-window ()
   (interactive)
-  (if (frame-parameter nil 'fullscreen)
-      (set-frame-parameter nil 'fullscreen nil)
-    (set-frame-parameter nil 'fullscreen 'fullboth)))
+  (if (>= emacs-major-version 23)
+      (ns-toggle-fullscreen)
+    (if (frame-parameter nil 'fullscreen)
+	(set-frame-parameter nil 'fullscreen nil)
+      (set-frame-parameter nil 'fullscreen 'fullboth))))
+
+
+;; (when (>= emacs-major-version 23)
+;;   (ns-toggle-fullscreen-internal))
+;; ns-toggle-fullscreen
 
 ;;; ファイル名重複時にバッファ名をわかりやすくする
 (require 'uniquify)

@@ -147,60 +147,53 @@
 (global-set-key "\C-ct" 'shell-toggle)
 (global-set-key "\C-cd" 'shell-toggle-cd)
 
+;;;; プログラミング言語モードの設定 =============================================
+;; (setq rails-tags-dirs '("app" "lib" "test" "db" "vendor"))
+;; (require 'rinari-extend-by-emacs-rails)
+;; (defun ruby-mode-hooks-rinari-extend ()
+;;   (define-key ruby-mode-map (kbd "<C-f1>") 'rails-search-doc)
+;;   (define-key ruby-mode-map [f1] 'rails-search-doc-at-point)
+;; )
+;; (defun rinari-mode-hooks-rinari-extend ()
+;;   (define-key rinari-minor-mode-map "\C-c\C-t" 'rails-create-tags)
+;; )
+;; (add-hook 'ruby-mode-hook 'ruby-mode-hooks-rinari-extend)
+;; (add-hook 'rinari-mode-hook 'rinari-mode-hooks-rinari-extend)
 
+;; Rinari
+(require 'rinari)
 
+;;;; Misc ======================================================================
+(require 'compile)
+(add-to-list 'compilation-error-regexp-alist
+             '(".+\\[\\(.+\\):\\([0-9]+\\)\\]:" 1 2))
 
+;;; gtags ----------------------------------------------------------------------
+(require 'gtags)
+(add-hook 'java-mode-hook (lambda () (gtags-mode 1)))
+(add-hook 'c-mode-hook (lambda () (gtags-mode 1)))
+(add-hook 'c++-mode-hook (lambda () (gtags-mode 1)))
 
+;; rhtml-modeをauto-completeモードの対象に追加
+(setq ac-modes (append ac-modes '(rhtml-mode)))
 
+; html-modeをauto-completeモードの対象に追加
+(setq ac-modes (append ac-modes '(html-mode)))
 
+;; auto-complete-ruby
+(require 'auto-complete-ruby)
+(add-hook 'ruby-mode-hook
+          (lambda ()
+            (setq ac-omni-completion-sources '(("\\.\\=" ac-source-rcodetools)))))
 
-;; ;;;; プログラミング言語モードの設定 =============================================
-;; ;; (setq rails-tags-dirs '("app" "lib" "test" "db" "vendor"))
-;; ;; (require 'rinari-extend-by-emacs-rails)
-;; ;; (defun ruby-mode-hooks-rinari-extend ()
-;; ;;   (define-key ruby-mode-map (kbd "<C-f1>") 'rails-search-doc)
-;; ;;   (define-key ruby-mode-map [f1] 'rails-search-doc-at-point)
-;; ;; )
-;; ;; (defun rinari-mode-hooks-rinari-extend ()
-;; ;;   (define-key rinari-minor-mode-map "\C-c\C-t" 'rails-create-tags)
-;; ;; )
-;; ;; (add-hook 'ruby-mode-hook 'ruby-mode-hooks-rinari-extend)
-;; ;; (add-hook 'rinari-mode-hook 'rinari-mode-hooks-rinari-extend)
+(autoload 'rst-mode "rst-mode" "mode for editing reStructuredText documents" t)
+(require 'rst)  
+(setq auto-mode-alist
+      (append '(("\\.rst$" . rst-mode)
+                     ("\\.rest$" . rst-mode)) auto-mode-alist))
+;(add-hook 'text-mode-hook 'rst-text-mode-bindings)
 
-;; ;; Rinari
-;; (require 'rinari)
-
-;; ;;;; Misc ======================================================================
-;; (require 'compile)
-;; (add-to-list 'compilation-error-regexp-alist
-;;              '(".+\\[\\(.+\\):\\([0-9]+\\)\\]:" 1 2))
-
-;; ;;; gtags ----------------------------------------------------------------------
-;; (require 'gtags)
-;; (add-hook 'java-mode-hook (lambda () (gtags-mode 1)))
-;; (add-hook 'c-mode-hook (lambda () (gtags-mode 1)))
-;; (add-hook 'c++-mode-hook (lambda () (gtags-mode 1)))
-
-;; ;; rhtml-modeをauto-completeモードの対象に追加
-;; (setq ac-modes (append ac-modes '(rhtml-mode)))
-
-;; ; html-modeをauto-completeモードの対象に追加
-;; (setq ac-modes (append ac-modes '(html-mode)))
-
-;; ;; auto-complete-ruby
-;; (require 'auto-complete-ruby)
-;; (add-hook 'ruby-mode-hook
-;;           (lambda ()
-;;             (setq ac-omni-completion-sources '(("\\.\\=" ac-source-rcodetools)))))
-
-;; (autoload 'rst-mode "rst-mode" "mode for editing reStructuredText documents" t)
-;; (require 'rst)  
-;; (setq auto-mode-alist
-;;       (append '(("\\.rst$" . rst-mode)
-;;                      ("\\.rest$" . rst-mode)) auto-mode-alist))
-;; ;(add-hook 'text-mode-hook 'rst-text-mode-bindings)
-
-;; ; バッファ移動を楽にする (ido-mode or iswitchb-mode)
-;; ;(require 'ido)
-;; ;(ido-mode t)
-;; (iswitchb-mode 1)
+; バッファ移動を楽にする (ido-mode or iswitchb-mode)
+;(require 'ido)
+;(ido-mode t)
+(iswitchb-mode 1)
