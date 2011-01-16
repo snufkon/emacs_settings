@@ -24,6 +24,8 @@
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/rhtml-mode-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/python-mode-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/yaml-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/rst-mode-settings.el"))
+
 
 ;;;; 主要項目設定 ==============================================================
 (load (expand-file-name "~/.emacs.d/dot_emacs/major/anything-settings.el"))
@@ -188,13 +190,6 @@
 (add-hook 'ruby-mode-hook
           (lambda ()
             (setq ac-omni-completion-sources '(("\\.\\=" ac-source-rcodetools)))))
-
-(autoload 'rst-mode "rst-mode" "mode for editing reStructuredText documents" t)
-(require 'rst)  
-(setq auto-mode-alist
-      (append '(("\\.rst$" . rst-mode)
-                     ("\\.rest$" . rst-mode)) auto-mode-alist))
-;(add-hook 'text-mode-hook 'rst-text-mode-bindings)
 
 ; バッファ移動を楽にする (ido-mode or iswitchb-mode)
 ;(require 'ido)
