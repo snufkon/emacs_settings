@@ -1,4 +1,3 @@
-(add-to-list 'load-path "~/.emacs.d/elisp")
 (add-to-list 'load-path "~/.emacs.d/elisp/rinari")
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
 
@@ -21,6 +20,9 @@
 ; rubyライブラリのETAGSを作成するコマンド
 ; find `ruby -e 'print $:.join(" ")'` -name \*.rb | \
 ;   xargs etags --language=none --regex='/[ \t]*\(def\|class\)[ \t]\([^ \t]+\)/\2/'
+
+;;; TAGSファイルの再読込の確認をしないように設定
+(setq tags-revert-without-query t)
 
 
 ;;; シェルモードの設定 =========================================================
@@ -180,6 +182,7 @@
 ;; (set-buffer-file-coding-system 'utf-8)
 ;; (set-terminal-coding-system 'utf-8)
 ;; (set-keyboard-coding-system 'utf-8)
+
 ;; (set-clipboard-coding-system 'utf-8)
 
 ;; (cond

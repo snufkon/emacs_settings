@@ -27,6 +27,7 @@
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/rst-mode-settings.el"))
 
 
+
 ;;;; 主要項目設定 ==============================================================
 (load (expand-file-name "~/.emacs.d/dot_emacs/major/anything-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/major/auto-complete-settings.el"))
@@ -185,11 +186,12 @@
 ; html-modeをauto-completeモードの対象に追加
 (setq ac-modes (append ac-modes '(html-mode)))
 
+;; TODO: emacs22でエラーが発生する原因を調査する
 ;; auto-complete-ruby
-(require 'auto-complete-ruby)
-(add-hook 'ruby-mode-hook
-          (lambda ()
-            (setq ac-omni-completion-sources '(("\\.\\=" ac-source-rcodetools)))))
+;; (require 'auto-complete-ruby)
+;; (add-hook 'ruby-mode-hook
+;;           (lambda ()
+;;             (setq ac-omni-completion-sources '(("\\.\\=" ac-source-rcodetools)))))
 
 ; バッファ移動を楽にする (ido-mode or iswitchb-mode)
 ;(require 'ido)
