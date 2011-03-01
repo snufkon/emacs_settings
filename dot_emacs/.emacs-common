@@ -26,11 +26,13 @@
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/yaml-mode-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/rst-mode-settings.el"))
 
-
+;;;; 準主要項目設定 ============================================================
+(load (expand-file-name "~/.emacs.d/dot_emacs/minor/bm-settings.el"))
 
 ;;;; 主要項目設定 ==============================================================
 (load (expand-file-name "~/.emacs.d/dot_emacs/major/anything-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/major/auto-complete-settings.el"))
+
 
 ;;;; 入力に関する設定 ==========================================================
 ;;; 入力補完 -------------------------------------------------------------------

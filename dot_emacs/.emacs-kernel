@@ -37,6 +37,8 @@
        (eq window-system 'mac)
        (eq window-system 'ns))
   (set-frame-parameter nil 'alpha 80))
+; (set-frame-parameter nil 'alpha 100)
+; (set-frame-parameter nil 'alpha 80)
 
 ;; 選択範囲に色付け
 (transient-mark-mode 1)

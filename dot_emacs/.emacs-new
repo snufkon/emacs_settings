@@ -2,6 +2,22 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
 
 ;;;; 新しく追加したもの ========================================================
+;;; color-theme
+(require 'color-theme)
+
+;;; rspec-mode
+(require 'rspec-mode)
+;; (define-key rspec-mode-keymap (kbd "C-c ,v") 'rspec-verify)
+;; (define-key rspec-mode-keymap (kbd "C-c ,s") 'rspec-verify-single)
+;; (define-key rspec-mode-keymap (kbd "C-c ,a") 'rspec-verify-all)
+;; (define-key rspec-mode-keymap (kbd "C-c ,d") 'rspec-toggle-example-pendingness)
+; (define-key rspec-mode-keymap (kbd "C-c ,C-t") 'rspec-toggle-spec-and-target)
+(define-key rspec-mode-keymap "\C-c\C-t" 'rspec-toggle-spec-and-target)
+;; (add-hook 'ruby-mode-hook
+;; 	  '(lambda ()
+;; 	     (rspec-mode t)))
+
+
 ;;; etagsファイル作成用コマンド
 ;; 参考: http://d.hatena.ne.jp/teny/20060705
 (defvar etags-tag-rebuild-command-ruby
@@ -107,14 +123,14 @@
       'text-translator-translate-by-auto-selection-enja)
 
 ;;; bm.elの設定(カーソル位置に目に見える印をつける)
-(setq-default bm-buffer-persistence nil)
-(setq bm-restore-repository-on-load t)
-(require 'bm)
-(add-hook 'find-file-hooks 'bm-buffer-restore)
-(add-hook 'kill-buffer-hook 'bm-buffer-save)
-(add-hook 'after-save-hook 'bm-buffer-save)
-(add-hook 'after-revert-hook 'bm-buffer-restore)
-(add-hook 'vc-before-checkin-hook 'bm-buffer-save)
+;; (setq-default bm-buffer-persistence nil)
+;; (setq bm-restore-repository-on-load t)
+;; (require 'bm)
+;; (add-hook 'find-file-hooks 'bm-buffer-restore)
+;; (add-hook 'kill-buffer-hook 'bm-buffer-save)
+;; (add-hook 'after-save-hook 'bm-buffer-save)
+;; (add-hook 'after-revert-hook 'bm-buffer-restore)
+;; (add-hook 'vc-before-checkin-hook 'bm-buffer-save)
 
 ;;; diff-modeの背景色等を変更
 (add-hook 'diff-mode-hook
@@ -159,20 +175,12 @@
 ;; M-x exitでEmacsを終了できるようにする
 ;(defalias 'exit 'save-buffers-kill-emacs)
 
-;;; tempbuf.elの設定
-;;; 効果: 使わないバッファを自動的に削除
-(require 'tempbuf)
-;; ファイルを開いたら自動的にtempbufを有効にする
-;(add-hook 'find-file-hooks 'turn-on-tempbuf-mode)
-;; diredバッファに対してtempbufを有効にする
-(add-hook 'dired-mode-hook 'turn-on-tempbuf-mode)
-
 ;;; auto-save-buffers.elの設定
 ;;; 効果: ファイルを自動保存する
 ;;; Inttall from: http://homepage3.nifty.com/oatu/emacs/archives/auto-save-buffers.el
 ;;; Original    : http://Oxcc.net/misc/auto-save/auto-save-buffers.el
-(require 'auto-save-buffers)
-(run-with-idle-timer 5 t 'auto-save-buffers) ; アイドル5秒で保存
+;; (require 'auto-save-buffers)
+;; (run-with-idle-timer 5 t 'auto-save-buffers) ; アイドル5秒で保存
 
 
 ;;; shellモードが文字化けするので設定
