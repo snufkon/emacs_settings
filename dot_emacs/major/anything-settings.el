@@ -5,6 +5,7 @@
 (require 'anything-etags)
 (require 'anything-yaetags)
 (require 'anything-gtags)
+(require 'anything-ipa)
 
 ;; 自動でimenuのインデックスを作成
 (setq imenu-auto-rescan t)
