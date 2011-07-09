@@ -1,0 +1,10 @@
+
+# バイトコンパイルしたファイルは除外
+*.elc
+
+# バックアップファイルは除外
+*~
+*#
+
+# anythingの履歴ファイル？は除外
+anything-c-adaptive-history
