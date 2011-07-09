@@ -25,9 +25,12 @@
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/python-mode-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/yaml-mode-settings.el"))
 (load (expand-file-name "~/.emacs.d/dot_emacs/mode/rst-mode-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/mode/org-mode-settings.el"))
 
 ;;;; 準主要項目設定 ============================================================
 (load (expand-file-name "~/.emacs.d/dot_emacs/minor/bm-settings.el"))
+(load (expand-file-name "~/.emacs.d/dot_emacs/minor/key-chord-settings.el"))
+
 
 ;;;; 主要項目設定 ==============================================================
 (load (expand-file-name "~/.emacs.d/dot_emacs/major/anything-settings.el"))

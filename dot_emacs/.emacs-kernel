@@ -36,7 +36,8 @@
 (when (or
        (eq window-system 'mac)
        (eq window-system 'ns))
-  (set-frame-parameter nil 'alpha 80))
+  (set-frame-parameter nil 'alpha 75))
+;  (set-frame-parameter nil 'alpha 80))
 ; (set-frame-parameter nil 'alpha 100)
 ; (set-frame-parameter nil 'alpha 80)
 

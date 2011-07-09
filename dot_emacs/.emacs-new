@@ -2,8 +2,16 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
 
 ;;;; 新しく追加したもの ========================================================
+;;; speedbar
+(require 'sr-speedbar)
+(setq sr-speedbar-right-side nil)
+(global-set-key (kbd "<f6>") 'sr-speedbar-toggle)
+
+;;; e2wm(require 'e2wm)
+(global-set-key (kbd "M-+") 'e2wm:start-management)
+
 ;;; color-theme
-(require 'color-theme)
+;;;(require 'color-theme)
 
 ;;; rspec-mode
 (require 'rspec-mode)
@@ -16,7 +24,6 @@
 ;; (add-hook 'ruby-mode-hook
 ;; 	  '(lambda ()
 ;; 	     (rspec-mode t)))
-
 
 ;;; etagsファイル作成用コマンド
 ;; 参考: http://d.hatena.ne.jp/teny/20060705
@@ -80,9 +87,9 @@
   (setq file-name-coding-system 'utf-8-hfs)
   (setq locale-coding-system 'utf-8-hfs))
 
-(global-set-key (kbd "C-c t") '(lambda ()
-				 (interactive)
-				 (term shell-file-name)))
+;; (global-set-key (kbd "C-c t") '(lambda ()
+;; 				 (interactive)
+;; 				 (term shell-file-name)))
 
 (autoload 'ansi-color-for-comint-mode-on "ansi-color" nil t)
 (add-hook 'shell-mode-hook 'ansi-color-for-comint-mode-on)
