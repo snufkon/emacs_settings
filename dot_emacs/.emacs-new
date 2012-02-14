@@ -2,6 +2,13 @@
 (add-to-list 'load-path "~/.emacs.d/elisp/rhtml")
 
 ;;;; 新しく追加したもの ========================================================
+;;; Slime
+(require 'slime)
+(setq slime-net-coding-system 'utf-8-unix
+      slime-protocol-version 'ignore)
+(slime-setup '(slime-repl))
+;(slime-setup '(slime-repl slime-fancy slime-banner))
+
 ;;; speedbar
 (require 'sr-speedbar)
 (setq sr-speedbar-right-side nil)
@@ -37,7 +44,6 @@
    (list (read-shell-command "Etags command: "
                              etags-tag-rebuild-command-ruby))
    (list etags-tag-rebuild-command-ruby))
-
   (shell-command command))
 
 ; rubyライブラリのETAGSを作成するコマンド
@@ -129,6 +135,7 @@
 (setq text-translator-auto-selection-func
       'text-translator-translate-by-auto-selection-enja)
 
+
 ;;; bm.elの設定(カーソル位置に目に見える印をつける)
 ;; (setq-default bm-buffer-persistence nil)
 ;; (setq bm-restore-repository-on-load t)
@@ -166,7 +173,12 @@
 ;;; emacsclientの設定
 ;;; 効果: シェルから現在のEmacsにアクセスできる
 ;;; 使い方: emacsclient filename
-(server-start)
+(require 'server)
+(unless (server-running-p)
+  (server-start))
+
+(unless (server-running-p)
+  (server-start))
 (defun iconify-emacs-when-server-is-done ()
   (unless server-clients (iconify-frame)))
 ;; 編集後にitermに戻るように設定
