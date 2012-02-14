@@ -8,6 +8,7 @@
 ;; 自動でimenuのインデックスを作成
 (setq imenu-auto-rescan t)
 (global-set-key (kbd "C-x b") 'anything)
+(global-set-key (kbd "C-x C-b") 'anything)
 
 
 ;;; 複数ファイルにまたがりbm.elを検索対象に追加する設定 ------------------------
